@@ -1,0 +1,42 @@
+//=========================//
+// Union-Find (Disjoint Set Union) Implementation
+//=========================//
+
+/*
+ * Function: find
+ * ----------------------------
+ *   Finds the representative (or parent) of the set that element i belongs to.
+ *   This function uses recursion to find the root of the set.
+ *   It does not implement path compression in this version.
+ *
+ *   parent: array representing the parent of each element
+ *   i: element whose set representative is to be found
+ *
+ *   returns: the representative (root) of the set containing element i
+ */
+int find(int parent[], int i) {
+    if (i == parent[i]) 
+        return i;
+    
+    return find(parent, parent[i]);
+}
+
+/*
+ * Function: unionSet
+ * ----------------------------
+ *   Merges the sets containing elements x and y.
+ *   If x and y belong to different sets, this function links one root to the other.
+ *   This version does not use union by rank or size.
+ *
+ *   parent: array representing the parent of each element
+ *   x: first element
+ *   y: second element
+ */
+void unionSet(int parent[], int x, int y) {
+    int x_parent = find(parent, x);
+    int y_parent = find(parent, y);
+
+    if (x_parent != y_parent) {
+        parent[x_parent] = y_parent;  // Merge the sets
+    }
+}
