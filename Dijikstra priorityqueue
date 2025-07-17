@@ -1,0 +1,86 @@
+class Solution {
+public:
+    // Alias for a pair: (distance, node)
+    typedef pair<int, int> p;
+
+    // Dijkstra's algorithm to find shortest paths from source
+    vector<int> dijkstra(int V, vector<vector<int>> &edges, int src) {
+        // Step 1: Build adjacency list
+        vector<vector<pair<int, int>>> adj(V);
+        for (int i = 0; i < edges.size(); i++) {
+            int u = edges[i][0]; // Source node of edge
+            int v = edges[i][1]; // Destination node of edge
+            int w = edges[i][2]; // Weight of edge
+
+            adj[u].push_back({v, w}); // Add edge u → v
+            adj[v].push_back({u, w}); // Add edge v → u (since graph is undirected)
+        }
+
+        // Step 2: Min-heap priority queue (distance, node)
+        priority_queue<p, vector<p>, greater<p>> pq;
+
+        // Step 3: Distance vector initialized to "infinity"
+        vector<int> result(V, INT_MAX);
+        result[src] = 0; // Distance to source is 0
+        pq.push({0, src}); // Push source to queue
+
+        // Step 4: Process nodes in order of shortest known distance
+        while (!pq.empty()) {
+            int dist = pq.top().first;   // Current distance
+            int node = pq.top().second;  // Current node
+            pq.pop();
+
+            // Step 5: Traverse all adjacent nodes
+            for (auto &v : adj[node]) {
+                int adjacentNode = v.first;
+                int weight = v.second;
+
+                // If a shorter path to adjacentNode is found
+                if (dist + weight < result[adjacentNode]) {
+                    result[adjacentNode] = dist + weight; // Update shortest distance
+                    pq.push({result[adjacentNode], adjacentNode}); // Push updated distance into queue
+                }
+            }
+        }
+
+        // Step 6: Return final shortest distance from src to all nodes
+        return result;
+    }
+};
+
+
+
+
+#✅ Algorithm: Dijkstra's Algorithm — Step-by-Step
+Initialize:
+
+Create an adjacency list from the given edge list.
+
+Set all distances in a result array to INT_MAX (infinity).
+
+Set the source node’s distance to 0.
+
+Priority Queue:
+
+Use a min-heap (priority queue) to always pick the node with the shortest known distance.
+
+Push the source node (0, src) into the queue.
+
+While the queue is not empty:
+
+Pop the top node with the current shortest distance.
+
+For each neighbor of this node:
+
+If the path through the current node gives a shorter distance to the neighbor:
+
+Update the neighbor's distance.
+
+Push the neighbor with the new distance into the queue.
+
+After the queue is empty:
+
+The result array contains the shortest distances from the source to every other node.
+
+Return the result array.
+
