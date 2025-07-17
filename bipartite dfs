@@ -1,0 +1,58 @@
+class Solution {
+public:
+
+    // DFS function to try coloring the graph using 2 colors
+    bool dfs(int curr, vector<vector<int>> &adj, int colr, vector<int> &color) {
+        // Assign current color to the node
+        color[curr] = colr;
+
+        // Traverse all adjacent nodes
+        for (auto &v : adj[curr]) {
+            // If the neighbor has the same color, it's not bipartite
+            if (color[v] == color[curr]) return false;
+
+            // If the neighbor is not colored yet
+            if (color[v] == -1) {
+                // Try to color the neighbor with the opposite color (0 ↔ 1)
+                if (!dfs(v, adj, 1 - colr, color)) return false;
+            }
+        }
+
+        // No conflicts, return true
+        return true;
+    }
+
+    // Main function to check if a graph is bipartite
+    bool isBipartite(int V, vector<vector<int>> &edges) {
+        // Create an adjacency list of size V
+        vector<vector<int>> adj(V);
+
+        // Convert edge list into adjacency list
+        for (auto &edge : edges) {
+            int u = edge[0]; // One endpoint
+            int v = edge[1]; // Other endpoint
+
+            // Since the graph is undirected, add both directions
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+
+        // Initialize all node colors as -1 (unvisited)
+        vector<int> color(V, -1);
+
+        // Try to color all disconnected components
+        for (int i = 0; i < V; i++) {
+            // If the node is not yet visited (uncolored)
+            if (color[i] == -1) {
+                // Start DFS with color 0 (can also use 1 — both are fine)
+                if (!dfs(i, adj, 0, color)) {
+                    // If any component is not bipartite, return false
+                    return false;
+                }
+            }
+        }
+
+        // All components are bipartite
+        return true;
+    }
+};
