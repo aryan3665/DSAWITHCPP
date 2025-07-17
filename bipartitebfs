@@ -1,0 +1,60 @@
+class Solution {
+public:
+    // BFS function to try coloring the graph starting from 'curr'
+    bool bfs(int curr, vector<vector<int>> &adj, int colr, vector<int> &color) {
+        queue<int> q;             // Queue for BFS traversal
+        q.push(curr);             // Start BFS from the current node
+        color[curr] = colr;       // Assign the starting color (0 or 1)
+
+        while (!q.empty()) {
+            int u = q.front();    // Get the front node in queue
+            q.pop();
+
+            // Traverse all adjacent nodes of 'u'
+            for (auto &v : adj[u]) {
+                // If the neighbor has the same color as current, not bipartite
+                if (color[v] == color[u]) return false;
+
+                // If the neighbor hasn't been colored yet
+                else if (color[v] == -1) {
+                    color[v] = 1 - color[u]; // Assign the opposite color
+                    q.push(v);              // Add to queue for further BFS
+                }
+            }
+        }
+
+        // If no conflict was found, this component is bipartite
+        return true;
+    }
+
+    // Main function to check if the entire graph is bipartite
+    bool isBipartite(int V, vector<vector<int>> &edges) {
+        // Step 1: Convert edge list to adjacency list
+        vector<vector<int>> adj(V);   // Adjacency list to represent the graph
+
+        for (auto &edge : edges) {
+            int u = edge[0];          // One end of the edge
+            int v = edge[1];          // Other end of the edge
+
+            // Since the graph is undirected, add both directions
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+
+        // Step 2: Initialize all vertices as unvisited (-1)
+        vector<int> color(V, -1);     // -1 means not yet colored
+
+        // Step 3: Check all connected components
+        for (int i = 0; i < V; i++) {
+            if (color[i] == -1) {
+                // Start BFS for unvisited node with color 0
+                if (!bfs(i, adj, 0, color)) {
+                    return false;     // If any component isn't bipartite
+                }
+            }
+        }
+
+        // All components are bipartite
+        return true;
+    }
+};
