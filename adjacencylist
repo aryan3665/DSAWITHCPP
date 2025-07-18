@@ -1,0 +1,14 @@
+// Initialize an adjacency list with V vertices.
+// Each vertex has a list to store its connected neighbors.
+vector<vector<int>> adj(V);
+
+// Iterate through each edge in the edges list
+for (int i = 0; i < edges.size(); i++) {
+    int u = edges[i][0]; // Start node of the edge
+    int v = edges[i][1]; // End node of the edge
+
+    // Since it's an undirected graph, add v to u's list
+    // and u to v's list.
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+}
