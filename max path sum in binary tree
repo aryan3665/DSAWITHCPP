@@ -8,23 +8,8 @@ Find the maximum path sum in a binary tree where:
 - No node may appear more than once in the path
 - The path can start and end at any node
 
-2. Issues in Given Code
-----------------------
-The provided solution has three main problems:
 
-1. Initialization Issue:
-   - int sum = 0;
-   - Fails for all-negative trees (should be INT_MIN)
-
-2. Negative Value Handling:
-   - Doesn't properly reject negative subtree sums
-   - Should use max(0, subtreeSum) to discard negative contributions
-
-3. Return Value Logic:
-   - Returns root->val + max(leftsum, rightsum)
-   - Should return root->val + max(0, max(leftsum, rightsum))
-
-3. Correct Approach
+ Approach
 ------------------
 The proper recursive solution should:
 
@@ -39,7 +24,7 @@ The proper recursive solution should:
      * Update global max if path through current node is larger
      * Return maximum path that can be extended upward
 
-4. Corrected Code
+. Corrected Code
 ----------------
 class Solution {
 public:
@@ -61,7 +46,7 @@ public:
     }
 };
 
-5. Dry Run Example
+. Dry Run Example
 -----------------
 Tree:
     -10
@@ -83,7 +68,7 @@ Execution:
    - Returns -10+35=25
    - sum remains 42 (correct answer)
 
-6. Edge Cases
+. Edge Cases
 ------------
 1. All negative values:
    -10
@@ -102,18 +87,13 @@ Correctly returns 5
        3
 Returns 6 (1+2+3)
 
-7. Why Original Code Fails
--------------------------
-1. Initial sum=0 fails for all-negative trees
-2. Doesn't discard negative subtree sums
-3. Return value may include negative subtrees
 
-8. Time Complexity
+. Time Complexity
 -----------------
 O(n) - Each node visited exactly once
 Space: O(h) for recursion stack (h = tree height)
 
-9. Key Insights
+. Key Insights
 ---------------
 - Always initialize with INT_MIN for max problems
 - Negative values should be discarded (max with 0)
