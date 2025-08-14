@@ -1,0 +1,122 @@
+Maximum Path Sum in Binary Tree - Analysis
+=========================================
+
+1. Problem Statement
+-------------------
+Find the maximum path sum in a binary tree where:
+- A path is any sequence of nodes connected by parent-child relationships
+- No node may appear more than once in the path
+- The path can start and end at any node
+
+2. Issues in Given Code
+----------------------
+The provided solution has three main problems:
+
+1. Initialization Issue:
+   - int sum = 0;
+   - Fails for all-negative trees (should be INT_MIN)
+
+2. Negative Value Handling:
+   - Doesn't properly reject negative subtree sums
+   - Should use max(0, subtreeSum) to discard negative contributions
+
+3. Return Value Logic:
+   - Returns root->val + max(leftsum, rightsum)
+   - Should return root->val + max(0, max(leftsum, rightsum))
+
+3. Correct Approach
+------------------
+The proper recursive solution should:
+
+1. For each node, calculate:
+   - Maximum path sum through the node (could be the global max)
+   - Maximum path sum that can be extended upward
+
+2. Key steps:
+   - Initialize global max as INT_MIN
+   - At each node:
+     * Get max path sums from left/right subtrees (discard if negative)
+     * Update global max if path through current node is larger
+     * Return maximum path that can be extended upward
+
+4. Corrected Code
+----------------
+class Solution {
+public:
+    int solve(TreeNode* root, int &sum) {
+        if(!root) return 0;
+        
+        int left = max(0, solve(root->left, sum));
+        int right = max(0, solve(root->right, sum));
+        
+        sum = max(sum, root->val + left + right);
+        
+        return root->val + max(left, right);
+    }
+    
+    int maxPathSum(TreeNode* root) {
+        int sum = INT_MIN;
+        solve(root, sum);
+        return sum;
+    }
+};
+
+5. Dry Run Example
+-----------------
+Tree:
+    -10
+    / \
+   9  20
+     /  \
+    15   7
+
+Execution:
+1. Node 15: returns 15 (sum=15)
+2. Node 7: returns 7 (sum=15)
+3. Node 20:
+   - Path through: 20+15+7=42
+   - Returns 20+max(15,7)=35
+   - Updates sum to 42
+4. Node 9: returns 9 (sum=42)
+5. Node -10:
+   - Path through: -10+0+35=25
+   - Returns -10+35=25
+   - sum remains 42 (correct answer)
+
+6. Edge Cases
+------------
+1. All negative values:
+   -10
+   / \
+ -20 -30
+Initialized with INT_MIN, correctly returns -10
+
+2. Single node: [5]
+Correctly returns 5
+
+3. Skewed tree:
+   1
+    \
+     2
+      \
+       3
+Returns 6 (1+2+3)
+
+7. Why Original Code Fails
+-------------------------
+1. Initial sum=0 fails for all-negative trees
+2. Doesn't discard negative subtree sums
+3. Return value may include negative subtrees
+
+8. Time Complexity
+-----------------
+O(n) - Each node visited exactly once
+Space: O(h) for recursion stack (h = tree height)
+
+9. Key Insights
+---------------
+- Always initialize with INT_MIN for max problems
+- Negative values should be discarded (max with 0)
+- Need to track both:
+  * Global maximum path sum
+  * Maximum extendable path sum
