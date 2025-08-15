@@ -1,0 +1,139 @@
+=============================
+BOUNDARY TRAVERSAL OF BINARY TREE
+=============================
+
+PROBLEM:
+--------
+Given the root of a binary tree, return the boundary traversal in anti-clockwise order:
+1. Root node (if not a leaf)
+2. Left boundary (top to bottom, excluding leaves)
+3. All leaves (left to right)
+4. Right boundary (bottom to top, excluding leaves)
+
+-------------------------------------
+EXAMPLE:
+-------------------------------------
+Tree:
+        1
+      /   \
+     2     3
+    / \   / \
+   4   5 6   7
+      / \
+     8   9
+
+Boundary Traversal:
+Step 1: Root        → 1
+Step 2: Left Bound  → 2
+Step 3: Leaves      → 4, 8, 9, 6, 7
+Step 4: Right Bound → 3
+
+OUTPUT:
+1 2 4 8 9 6 7 3
+
+-------------------------------------
+APPROACH:
+-------------------------------------
+
+1. isLeaf function:
+   - Checks if a node has no left and right children.
+   - If both are NULL → it’s a leaf.
+
+2. addLeft function:
+   - Start from root->left
+   - Move downwards (prefer left child, else right)
+   - Add node to result only if not a leaf.
+
+3. addLeaves function:
+   - Traverse the entire tree.
+   - Add to result only if node is a leaf.
+
+4. addRight function:
+   - Start from root->right
+   - Move downwards (prefer right child, else left)
+   - Skip leaves.
+   - Store nodes in a stack to reverse order.
+   - Pop and add to result.
+
+5. boundaryTraversal function:
+   - Add root if not a leaf
+   - Add left boundary
+   - Add all leaves
+   - Add right boundary (reversed)
+
+-------------------------------------
+TIME COMPLEXITY:
+-------------------------------------
+addLeft   → O(H)   (H = height)
+addLeaves → O(N)   (N = total nodes)
+addRight  → O(H)
+
+Overall: O(N)
+
+-------------------------------------
+SPACE COMPLEXITY:
+-------------------------------------
+Auxiliary space = O(H) due to recursion + stack
+Worst case skewed tree → O(N)
+
+-------------------------------------
+KEY POINTS:
+-------------------------------------
+- Avoid printing leaves twice.
+- Right boundary must be reversed.
+- Order must be: Root → Left boundary → Leaves → Right boundary.
+
+-------------------------------------
+CODE (C++):
+-------------------------------------
+class Solution {
+  public:
+  
+  bool isLeaf(Node* root) {
+      return (!root->left && !root->right);
+  }
+  
+  void addLeft(Node* root, vector<int>& res) {
+      Node* curr = root->left;
+      while(curr) {
+          if(!isLeaf(curr)) res.push_back(curr->data);
+          if(curr->left) curr = curr->left;
+          else curr = curr->right;
+      }
+  }
+  
+  void addLeaves(Node* root, vector<int>& res) {
+      if(isLeaf(root)) {
+          res.push_back(root->data);
+          return;
+      }
+      if(root->left) addLeaves(root->left, res);
+      if(root->right) addLeaves(root->right, res);
+  }
+  
+  void addRight(Node* root, vector<int>& res) {
+      Node* curr = root->right;
+      stack<int> st;
+      while(curr) {
+          if(!isLeaf(curr)) st.push(curr->data);
+          if(curr->right) curr = curr->right;
+          else curr = curr->left;
+      }
+      while(!st.empty()) {
+          res.push_back(st.top());
+          st.pop();
+      }
+  }
+  
+  vector<int> boundaryTraversal(Node *root) {
+      vector<int> res;
+      if(!root) return res;
+      
+      if(!isLeaf(root)) res.push_back(root->data);
+      addLeft(root, res);
+      addLeaves(root, res);
+      addRight(root, res);
+      
+      return res;
+  }
+};
